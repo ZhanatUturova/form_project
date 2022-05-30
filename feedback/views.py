@@ -8,13 +8,16 @@ def index(request):
         form = FeedbackForm(request.POST)       # здесь форма заполнена данными
         if form.is_valid():
             print(form.cleaned_data)
-            feed = Feedback(
-                name=form.cleaned_data['name'],
-                surname=form.cleaned_data['surname'],
-                feedback=form.cleaned_data['feedback'],
-                rating=form.cleaned_data['rating'],
-            )
-            feed.save()
+
+            # feed = Feedback(              так нужно писать, когда формы не основаны на моделях
+            #     name=form.cleaned_data['name'],
+            #     surname=form.cleaned_data['surname'],
+            #     feedback=form.cleaned_data['feedback'],
+            #     rating=form.cleaned_data['rating'],
+            # )
+            # feed.save()
+
+            form.save()
             return HttpResponseRedirect('/done')
     else:
         form = FeedbackForm()           # здесь форма пустая
