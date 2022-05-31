@@ -25,3 +25,15 @@ def index(request):
 
 def done(request):
     return render(request, 'feedback/done.html')
+
+
+def update_feedback(request, id_feedback: int):
+    feed = Feedback.objects.get(id=id_feedback)
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST, instance=feed)       # instance означает, что мы работает с уже существующей записью
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(f'/{id_feedback}')
+    else:
+        form = FeedbackForm(instance=feed)
+    return render(request, 'feedback/feedback.html', context={'form': form})
