@@ -1,11 +1,10 @@
 {% extends 'feedback/base.html' %}
-{% block title %}  {% endblock %}
+{% block title %}Страница отзывов{% endblock %}
 
 {% block content %}
     <h2>Оставьте отзыв</h2>
     <form method="post">
         {% csrf_token %}
-
         {% for field in form %}
         <div class="form-style {% if field.errors %} errors {% endif %}">
             {{ field.label_tag }}
