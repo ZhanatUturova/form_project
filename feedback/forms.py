@@ -38,3 +38,4 @@ class FeedbackForm(forms.ModelForm):
                 'required': 'Поле не должно быть пустым',
             },
         }
+
