@@ -2,8 +2,8 @@
 
 {% block title %}Посмотреть отзыв{% endblock %}
 {% block content %}
-    <h2>Имя - {{ one_feedback.name }}</h2>
-    <h2>Фамилия - {{ one_feedback.surname }}</h2>
-    <h2>Отзыв - {{ one_feedback.feedback }}</h2>
-    <h2>Рейтинг - {{ one_feedback.rating }}</h2>
+    <h3>Имя - {{ feedback.name }}</h3>
+    <h3>Фамилия - {{ feedback.surname }}</h3>
+    <h3>Рейтинг - {{ feedback.rating }}</h3>
+    <p>{{ feedback.feedback }}</p>
 {% endblock %}

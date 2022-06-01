@@ -5,7 +5,7 @@ from .models import Feedback
 
 from django.views import View
 from django.views.generic.base import TemplateView
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 
 class FeedBackView(View):
@@ -48,26 +48,6 @@ class FeedBackUpdateView(View):
         return render(request, 'feedback/feedback.html', context={'form': form})
 
 
-# class ListFeedBack(TemplateView):
-#     template_name = 'feedback/list_feedback.html'
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         all_feedbacks = Feedback.objects.all()
-#         context['all_feedbacks'] = all_feedbacks
-#         return context
-
-
-class DetailFeedBack(TemplateView):
-    template_name = 'feedback/detail_feedback.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        one_feedback = Feedback.objects.get(id=kwargs['id_feedback'])
-        context['one_feedback'] = one_feedback
-        return context
-
-
 class ListFeedBack(ListView):
     template_name = 'feedback/list_feedback.html'
     model = Feedback
@@ -80,3 +60,21 @@ class ListFeedBack(ListView):
         queryset = super().get_queryset()       # по-умолчанию берет model.objects.all()
         filter_qs = queryset.filter(rating__gt=3)
         return filter_qs
+
+
+# class DetailFeedBack(TemplateView):
+#     template_name = 'feedback/detail_feedback.html'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         id_feedback = kwargs['id_feedback']
+#         one_feedback = Feedback.objects.get(id=id_feedback)
+#         context['one_feedback'] = one_feedback
+#         return context
+
+class DetailFeedBack(DetailView):       # в urls обязательно должно быть <int:pk> или слаг!
+    template_name = 'feedback/detail_feedback.html'
+    model = Feedback
+
+    # название ключа атоматически берется из названия модели только маленькими буквами. Можно переопределить
+    # context_object_name = 'one_feedback'  # по-умолчанию можно еще обращаться как object
