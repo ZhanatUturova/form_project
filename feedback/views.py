@@ -5,6 +5,7 @@ from .models import Feedback
 
 from django.views import View
 from django.views.generic.base import TemplateView
+from django.views.generic import ListView
 
 
 class FeedBackView(View):
@@ -34,7 +35,8 @@ class FeedBackUpdateView(View):
 
     def post(self, request, id_feedback: int):
         feed = Feedback.objects.get(id=id_feedback)
-        form = FeedbackForm(request.POST, instance=feed)       # instance означает, что мы работает с уже существующей записью
+        form = FeedbackForm(request.POST,
+                            instance=feed)  # instance означает, что мы работает с уже существующей записью
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(f'/{id_feedback}')
@@ -46,14 +48,15 @@ class FeedBackUpdateView(View):
         return render(request, 'feedback/feedback.html', context={'form': form})
 
 
-class ListFeedBack(TemplateView):
-    template_name = 'feedback/list_feedback.html'
+# class ListFeedBack(TemplateView):
+#     template_name = 'feedback/list_feedback.html'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         all_feedbacks = Feedback.objects.all()
+#         context['all_feedbacks'] = all_feedbacks
+#         return context
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        all_feedbacks = Feedback.objects.all()
-        context['all_feedbacks'] = all_feedbacks
-        return context
 
 class DetailFeedBack(TemplateView):
     template_name = 'feedback/detail_feedback.html'
@@ -63,3 +66,17 @@ class DetailFeedBack(TemplateView):
         one_feedback = Feedback.objects.get(id=kwargs['id_feedback'])
         context['one_feedback'] = one_feedback
         return context
+
+
+class ListFeedBack(ListView):
+    template_name = 'feedback/list_feedback.html'
+    model = Feedback
+
+    # название ключа для контекста.
+    context_object_name = 'all_feedbacks'  # если не написать, будет по-умолчанию object_list
+
+    # можно отфильтровать queryset
+    def get_queryset(self):
+        queryset = super().get_queryset()       # по-умолчанию берет model.objects.all()
+        filter_qs = queryset.filter(rating__gt=3)
+        return filter_qs
