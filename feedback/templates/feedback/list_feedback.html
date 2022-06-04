@@ -3,13 +3,13 @@
 
 {% block content %}
     <h2>Все Отзывы</h2>
-    <ol>
+    <ul>
         {% for feedback in all_feedbacks %}
         <li>
             <a href="{{ feedback.get_absolute_url }}">
-                {{ feedback.name }} - {{ feedback.surname }}: {{ feedback.rating }}
+                {{ feedback.pk }} | {{ feedback.name }} - {{ feedback.surname }}: {{ feedback.rating }}
             </a>
         </li>
         {% endfor %}
-    </ol>
+    </ul>
 {% endblock %}

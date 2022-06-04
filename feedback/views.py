@@ -6,30 +6,23 @@ from .models import Feedback
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import CreateView
-
-
-# class FeedBackView(FormView):
-#     # в шаблоне html надо обязательно обращаться к переменной form!
-#     form_class = FeedbackForm  # оператор вызова не нужен!
-#     template_name = 'feedback/feedback.html'
-#     success_url = '/done'  # URL куда должно быть перенаправление при успешной обработке формы
-#
-#     # описываем тут, что нужно делать с данными, которые мы получили в форме
-#     def form_valid(self, form):
-#         form.save()  # проверка на валидность не нужна. Тут форма уже точно валидна
-#         return super(FeedBackView, self).form_valid(form)
+from django.views.generic.edit import CreateView, UpdateView
 
 
 class FeedBackView(CreateView):
     # в шаблоне html надо обязательно обращаться к переменной form!
     model = Feedback
-    # fields = ['name', 'surname', 'feedback']    # список полей, которые надо отобразить в форме (может вызвать ошибку, если не написать обязательное поле по модели
-    # fields = '__all__'          # чтобы отображались все поля
-    # fields надо прописывать если не использовать form_class!
     form_class = FeedbackForm  # оператор вызова не нужен!
     template_name = 'feedback/feedback.html'
     success_url = '/done'  # URL куда должно быть перенаправление при успешной обработке формы
+
+
+class FeedBackViewUpdate(UpdateView):
+    model = Feedback
+    # form_class = FeedbackForm     # если нужна вся форма
+    fields = ['name', 'surname']        # список полей, которые можно обновлять
+    template_name = 'feedback/feedback.html'
+    success_url = '/done'
 
 
 class DoneView(TemplateView):
@@ -42,21 +35,21 @@ class DoneView(TemplateView):
         return context
 
 
-class FeedBackUpdateView(View):
-
-    def post(self, request, id_feedback: int):
-        feed = Feedback.objects.get(id=id_feedback)
-        form = FeedbackForm(request.POST,
-                            instance=feed)  # instance означает, что мы работает с уже существующей записью
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(f'/{id_feedback}')
-        return render(request, 'feedback/feedback.html', context={'form': form})
-
-    def get(self, request, id_feedback: int):
-        feed = Feedback.objects.get(id=id_feedback)
-        form = FeedbackForm(instance=feed)
-        return render(request, 'feedback/feedback.html', context={'form': form})
+# class FeedBackUpdateView(View):
+#
+#     def post(self, request, id_feedback: int):
+#         feed = Feedback.objects.get(id=id_feedback)
+#         form = FeedbackForm(request.POST,
+#                             instance=feed)  # instance означает, что мы работает с уже существующей записью
+#         if form.is_valid():
+#             form.save()
+#             return HttpResponseRedirect(f'/{id_feedback}')
+#         return render(request, 'feedback/feedback.html', context={'form': form})
+#
+#     def get(self, request, id_feedback: int):
+#         feed = Feedback.objects.get(id=id_feedback)
+#         form = FeedbackForm(instance=feed)
+#         return render(request, 'feedback/feedback.html', context={'form': form})
 
 
 class ListFeedBack(ListView):
