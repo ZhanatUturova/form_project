@@ -6,19 +6,32 @@ from .models import Feedback
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import FormView
 
 
-class FeedBackView(View):
-    def get(self, request):
-        form = FeedbackForm()  # здесь форма пустая
-        return render(request, 'feedback/feedback.html', context={'form': form})
+# class FeedBackView(View):
+#     def get(self, request):
+#         form = FeedbackForm()  # здесь форма пустая
+#         return render(request, 'feedback/feedback.html', context={'form': form})
+#
+#     def post(self, request):
+#         form = FeedbackForm(request.POST)  # здесь форма заполнена данными
+#         if form.is_valid():
+#             form.save()
+#             return HttpResponseRedirect('/done')
+#         return render(request, 'feedback/feedback.html', context={'form': form})
 
-    def post(self, request):
-        form = FeedbackForm(request.POST)  # здесь форма заполнена данными
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/done')
-        return render(request, 'feedback/feedback.html', context={'form': form})
+
+class FeedBackView(FormView):
+    # в шаблоне html надо обязательно обращаться к переменной form!
+    form_class = FeedbackForm  # оператор вызова не нужен!
+    template_name = 'feedback/feedback.html'
+    success_url = '/done'  # URL куда должно быть перенаправление при успешной обработке формы
+
+    # описываем тут, что нужно делать с данными, которые мы получили в форме
+    def form_valid(self, form):
+        form.save()  # проверка на валидность не нужна. Тут форма уже точно валидна
+        return super(FeedBackView, self).form_valid(form)
 
 
 class DoneView(TemplateView):
@@ -57,7 +70,7 @@ class ListFeedBack(ListView):
 
     # можно отфильтровать queryset
     def get_queryset(self):
-        queryset = super().get_queryset()       # по-умолчанию берет model.objects.all()
+        queryset = super().get_queryset()  # по-умолчанию берет model.objects.all()
         filter_qs = queryset.filter(rating__gt=3)
         return filter_qs
 
@@ -72,7 +85,7 @@ class ListFeedBack(ListView):
 #         context['one_feedback'] = one_feedback
 #         return context
 
-class DetailFeedBack(DetailView):       # в urls обязательно должно быть <int:pk> или слаг!
+class DetailFeedBack(DetailView):  # в urls обязательно должно быть <int:pk> или слаг!
     template_name = 'feedback/detail_feedback.html'
     model = Feedback
 
