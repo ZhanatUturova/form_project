@@ -1,12 +1,4 @@
-from django import forms
-from .models import Gallery
+from django.forms import forms
 
-
-class GalleryUploadForm(forms.ModelForm):
-    class Meta:
-        model = Gallery
-        fields = '__all__'
-
-        labels = {  # назначаем названия полей, чтобы не было как в моделях
-            'image': 'Картинка',
-        }
+class GalleryUploadForm(forms.Form):
+    image = forms.FileField()
